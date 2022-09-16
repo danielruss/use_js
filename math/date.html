@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.2.1/lib/browser/math.min.js"></script>
+</head>
+
+<body></body>
+<script>
+    function date(x) {
+        if (!x) {
+            this.date = new Date()
+        } else {
+            this.date = new Date(x)
+        }
+    }
+
+    date.prototype.addMonth(n){
+
+    }
+
+    function makeDate(x) {
+        return new date(x)
+    }
+
+    console.log(makeDate("2020-11"))
+</script>
+
+</html>

@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js" integrity="sha512-dOWVoGz1rNDSNecx+gQuLXG1Wv/hac3IA8WzRfnj2tUCk31b96ySjbuJebxp8Ypu617My4Z30nC/RHc5Glwg6Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div id=out></div>
+</body>
+<script>
+    /*function dog() {
+        console.log("woof")
+    }
+    try {
+        math.evaluate("dog()")
+    } catch (error) {
+        //console.error(error)
+        console.log("... caught dog error")
+        dog()
+    } */
+
+    function ym(str) {
+        return new YM(str)
+    }
+    function YM(str) {
+        let x = str.match(/^(\d+)\-(\d+)$/)
+        this.month = parseInt(x[2]).toLocaleString('en-us', { minimumIntegerDigits: 2 })
+        this.year = x[1]
+    }
+
+    YM.prototype.isYM = true
+    YM.prototype.toString = function () {
+        return `${this.year}-${this.month}`
+    }
+
+    YM.prototype.add = function (n) {
+        let m = parseInt(this.month)
+        let yr = parseInt(this.year) + Math.floor((m + n) / 12);
+        let mon = (m + n) % 12
+        return new YM(`${yr}-${mon}`).toString()
+    }
+
+    math.typed.addType({
+        name: 'YM',
+        test: function (x) {
+            return x && x.isYM
+        }
+    })
+
+    const add = math.typed('add', {
+        'YM, number': function (dte, m) {
+            return dte.add(m)
+        },
+        'number, YM': function (m, dte) {
+            return dte.add(m)
+        }
+    })
+    math.import({
+        YM: YM,
+        ym: ym,
+        add: add
+    })
+
+    const x = new YM('1968-4')
+    console.log(x.toString())
+    const x1 = x.add(6)
+    console.log(x1)
+
+
+</script>
+
+</html>

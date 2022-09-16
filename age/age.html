@@ -1,0 +1,36 @@
+<html>
+
+<head></head>
+
+<body>
+    Date of Birth: <input type="date" id="dob">
+    <input type="number" disabled>
+</body>
+<script>
+    document.getElementById("dob").addEventListener("change", (event) => {
+        console.log(event.target.value)
+        let dob = new Date(event.target.value)
+        console.log(`
+        month: ${dob.getUTCMonth()} 
+        year: ${dob.getUTCFullYear()}`)
+        let diff = new Date(new Date() - dob)
+        console.log(diff)
+    });
+
+
+    function age(dob, onDate) {
+        let d1 = new Date(dob)
+        d2 = !!onDate ? new Date(onDate) : new Date()
+        if (d2 < d1) throw ('onDate is before the Date of Birth')
+        dy = d2.getUTCFullYear() - d1.getUTCFullYear()
+
+        // if your birthday has not occured yet...
+        if (d1.getUTCMonth() > d2.getUTCMonth() ||
+            d1.getUTCMonth() == d2.getUTCMonth() && d1.getUTCDate() > d2.getUTCDate()) dy = dy - 1
+        console.log(`DOB: ${d1.toUTCString()}`)
+        console.log(`on Date: ${d2.toUTCString()}`)
+        return dy
+    }
+</script>
+
+</html>

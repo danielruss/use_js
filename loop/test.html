@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .question {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 10px;
+            border: thin black solid;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]+label {
+            display: inline-block;
+            background-color: beige;
+            width: 75%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        input[type="radio"]+label:hover {
+            background-color: #d6d6c0;
+        }
+
+        input[type="radio"]:checked+label {
+            background-color: #bbbba8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="question" id="Q1">
+        <input type="radio" name="lala" value="1" id="Q1_1"><label for="Q1_1">ding dong</label>
+        <input type="radio" name="lala" value="0" id="Q1_0"><label for="Q1_0">dong ding</label><input type="text" id="Q1_O" />
+    </div>
+</body>
+<script>
+    document.getElementById("Q1_0").addEventListener(" ", (event) => { console.log("q1_0 changed...") })
+</script>
+
+</html>

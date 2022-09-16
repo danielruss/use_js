@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .mono {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 5px;
+            border: thin black solid;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .question {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 10px;
+            border: thin black solid;
+            border-radius: 5px;
+            padding: 10px;
+        }
+    </style>
+    <script src="/loop/loop.js"></script>
+    <script src="/loop/render.js"></script>
+</head>
+
+<body>
+    <div id="mdown" class="mono"></div>
+</body>
+<script>
+    fetch("http://localhost:3000/loop/md.txt")
+        .then(response => response.text())
+        .then(text => {
+            let xx = parse(text)
+            window.questions = xx
+            let questions = makeIterator(xx, "test")
+            let current_question = questions.next()
+            while (!current_question.done) {
+                console.log(" ----- ")
+                console.log(current_question.value)
+                let renderedText = current_question.value.markdown
+                //let renderedText = renderMarkdown(current_question.value.markdown);
+                document.getElementById("mdown").insertAdjacentHTML("beforeend", `<div class="question">${renderedText}</div>`);
+                current_question = questions.next()
+            }
+        })
+</script>
+
+</html>

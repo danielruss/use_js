@@ -1,0 +1,15 @@
+[Q1] This is a question
+
+[Q2] This is another question
+
+<loop max=10>
+[LQ1] This is LQ1
+
+[LQ2] This is LQ2
+(1) next question
+(0) next iteration
+
+[LQ3] this is LQ3
+</loop>
+
+[END] all done
