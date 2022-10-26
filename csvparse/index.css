@@ -1,0 +1,10 @@
+.dropbox {
+    padding: 10px;
+    width: max-content;
+    min-height: 100px;
+    line-height: 100px;
+    background-color: lightcyan;
+    border: thin solid navy;
+    vertical-align: middle;
+    text-align: center;
+}

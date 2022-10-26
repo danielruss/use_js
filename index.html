@@ -1,71 +1,91 @@
+<!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <script src="./use_soccer.js"></script>
     <style>
-      #myDiv {
-        width: 50%;
-        height: 50%;
-        background-color: darkgreen;
-        color: yellow;
-      }
-      #d2 {
-        width: 50%;
-        height: 50%;
-        background-color: blue;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="myDiv">
-      <input type="button" value="let run" />
-      <script>
-        use.load().then((model) => {
-          // Embed an array of sentences.
-          const sentences = ["plumber", "pediatrian", "dog catcher"];
-          model.embed(sentences).then((embeddings) => {
-            // `embeddings` is a 2D tensor consisting of the 512-dimensional embeddings for each sentence.
-            // So in this example `embeddings` has the shape [2, 512].
-            embeddings.print(true /* verbose */);
-          });
-        });
-      </script>
-    </div>
-    <div
-      id="d2"
-      style="min-height: 200px; white-space: pre; border: 1px solid black"
-      ondragenter="document.getElementById('d2').textContent = ''; event.stopPropagation(); event.preventDefault();"
-      ondragover="event.stopPropagation(); event.preventDefault();"
-      ondrop="event.stopPropagation(); event.preventDefault();
-     dodrop(event);"
-    >
-      DROP FILES HERE FROM FINDER OR EXPLORER
-    </div>
-    <div>
-      <script>
-        function dropEventHandler(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          if (event.type == "drop") {
-            console.log(`${event.type} ====> `, event.dataTransfer);
-            event.dataTransfer.items.forEach((i) => {
-              let file = i.getAsFile();
-              console.log(i);
-              console.log(`file name : ${file.name}`);
-              let reader = new FileReader();
-              reader.readAsText(file);
-              reader.addEventListener("loadend", (event) => {
-                console.log(reader.result);
-              });
-            });
-          } else {
-          }
+        .label-block {
+            display: block;
         }
 
-        myDiv.addEventListener("drop", dropEventHandler);
-        myDiv.addEventListener("dragover", dropEventHandler);
-      </script>
-    </div>
-  </body>
+        #output {
+            margin: 10px;
+        }
+        th{
+            background-color: bisque;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <label class="label-block" for="JobTitle">Job Title</label>
+            <input id="JobTitle" type="text" value="plumber">
+        </div>
+        <div>
+            <label class="label-block" for="JobTask">Job Task</label>
+            <input id="JobTask" type="text" value="fix pipes">
+        </div>
+        <div>
+            <label class="label-block" for="n">Number of returned codes</label>
+            <input id="n" type="number" value="10" min="1" max="841">
+        </div>
+
+        <input id="embedButton" type="button" value="code">
+        <div id="output">
+
+        </div>
+    </form>
+</body>
+<script>
+
+    function make_table(res) {
+        function make_td(dta) {
+            const td_element = document.createElement("td");
+            td_element.innerText = dta;
+            return td_element;
+        }
+        function make_table_row(dta) {
+            const tr_element = document.createElement("tr");
+            tr_element.insertAdjacentElement("beforeend", make_td(dta.soc2010.code))
+            tr_element.insertAdjacentElement("beforeend", make_td(dta.score.toFixed(5)))
+            tr_element.insertAdjacentElement("beforeend", make_td(dta.soc2010.title))
+            return tr_element;
+        }
+
+        const table_element = document.createElement("table")
+        table_element.insertAdjacentHTML("afterbegin","<tr><th>SOC 2010 code</th><th>Score</th><th>SOC 2010 Title</th></tr>")
+        res.forEach( (item) => {
+            table_element.insertAdjacentElement("beforeend", make_table_row(item))
+        });
+        return table_element;
+    }
+
+    window.addEventListener("load", () => {
+        document.getElementById("embedButton").addEventListener("click", async () => {
+            let element = document.getElementById("output")
+            if (!soccer_use.loaded) {
+                element.innerText = 'Model loading... wait a sec and try again...'
+            }
+
+            let jobTitle = document.getElementById("JobTitle").value
+            let jobTask = document.getElementById("JobTask").value
+            let n = parseInt(document.getElementById("n").value)
+            if (jobTitle.trim().length > 0) {
+                if (jobTask.trim().length == 0) jobTask = "NA"
+                let results = await soccer_use.predict(jobTitle.trim(), jobTask.trim(),n)
+                element.insertAdjacentElement("afterbegin", make_table(results))
+                element.insertAdjacentText("afterbegin", jobTitle + " " + jobTask)
+            } else {
+                document.getElementById("output").innerHTML = jobTitle + " " + jobTask
+            }
+        })
+    })
+</script>
+
+
 </html>

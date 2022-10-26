@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <style>
+      #myDiv {
+        width: 50%;
+        height: 50%;
+        background-color: darkgreen;
+        color: yellow;
+      }
+      #d2 {
+        width: 50%;
+        height: 50%;
+        background-color: blue;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="myDiv">
+      <input type="button" value="lets run" />
+      <script>
+        use.load().then((model) => {
+          // Embed an array of sentences.
+          const sentences = ["plumber", "pediatrian", "dog catcher"];
+          model.embed(sentences).then((embeddings) => {
+            // `embeddings` is a 2D tensor consisting of the 512-dimensional embeddings for each sentence.
+            // So in this example `embeddings` has the shape [2, 512].
+            embeddings.print(true /* verbose */);
+          });
+        });
+      </script>
+    </div>
+    <div
+      id="d2"
+      style="min-height: 200px; white-space: pre; border: 1px solid black"
+      ondragenter="document.getElementById('d2').textContent = ''; event.stopPropagation(); event.preventDefault();"
+      ondragover="event.stopPropagation(); event.preventDefault();"
+      ondrop="event.stopPropagation(); event.preventDefault();
+     dodrop(event);"
+    >
+      DROP FILES HERE FROM FINDER OR EXPLORER
+    </div>
+    <div>
+      <script>
+        function dropEventHandler(event) {
+          event.stopPropagation();
+          event.preventDefault();
+          if (event.type == "drop") {
+            console.log(`${event.type} ====> `, event.dataTransfer);
+            event.dataTransfer.items.forEach((i) => {
+              let file = i.getAsFile();
+              console.log(i);
+              console.log(`file name : ${file.name}`);
+              let reader = new FileReader();
+              reader.readAsText(file);
+              reader.addEventListener("loadend", (event) => {
+                console.log(reader.result);
+              });
+            });
+          } else {
+          }
+        }
+
+        myDiv.addEventListener("drop", dropEventHandler);
+        myDiv.addEventListener("dragover", dropEventHandler);
+      </script>
+    </div>
+  </body>
+</html>

@@ -11,38 +11,148 @@
             padding: 10px;
         }
 
+        input[type="checkbox"],
         input[type="radio"] {
             display: none;
         }
 
+        input[type="checkbox"]+label,
         input[type="radio"]+label {
             display: inline-block;
-            background-color: beige;
+            background-color: rgb(240, 240, 240);
+            border: solid 3px rgb(240, 240, 240);
             width: 75%;
             padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 5px;
             text-align: center;
         }
 
+        input[type="checkbox"]+label:hover,
         input[type="radio"]+label:hover {
-            background-color: #d6d6c0;
+            border: solid 3px rgb(230, 230, 230);
+            background-color: rgb(230, 230, 230);
         }
 
+        input[type='checkbox']:checked+label,
         input[type="radio"]:checked+label {
-            background-color: #bbbba8;
+            border: solid 3px rgb(130, 193, 230);
+            background-color: rgb(60, 145, 222);
+            color: white;
+        }
+
+        .textlabel {
+            font-size: 0.5em;
+            display: block;
+            margin-top: 5px;
+        }
+
+
+        input[type='radio']+label+input[type="text"],
+        input[type='checkbox']+label+input[type="text"] {
+            border: solid 3px;
+            flex: 5
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            column-gap: 20px;
+            justify-content: start;
+
+            align-items: stretch;
+            margin: 5px;
+        }
+
+
+        .submit {
+            margin-top: 20px;
+            justify-content: space-between;
+        }
+
+        .submit * {
+            background-color: rgb(50, 122, 187);
+            color: white;
+            border: solid 3px rgb(50, 122, 187);
+        }
+
+        .errmess {
+            color: red;
+            border: 2px solid red;
+            font-family: Arial, Helvetica, sans-serif;
+            display: block;
+            padding: 2px;
+            width: max-content;
+            visibility: hidden;
         }
     </style>
+    <script src="./logic.js"></script>
 </head>
 
 <body>
     <div class="question" id="Q1">
-        <input type="radio" name="lala" value="1" id="Q1_1"><label for="Q1_1">ding dong</label>
-        <input type="radio" name="lala" value="0" id="Q1_0"><label for="Q1_0">dong ding</label><input type="text" id="Q1_O" />
+        What language did you speak growing up?
+        <div class="row">
+            <input type="checkbox" name="lala" value="1" id="Q1_1"><label for="Q1_1">English</label>
+        </div>
+        <div class="row">
+            <input type="checkbox" name="lala" value="2" id="Q1_2"><label for="Q1_2">Spanish</label>
+        </div>
+        <div class="row">
+            <input type="checkbox" name="lala" value="0" id="Q1_0"><label for="Q1_0">Other</label><input type="text"
+                name="lala" id="Q1_other" />
+        </div>
+        <div class="row">
+            <input type="checkbox" name="lala" value="3" id="Q1_3" data-reset=true><label for="Q1_3"> none of the above </label>
+        </div>
+        <div class="row">
+            <input type="checkbox" name="lala" value="4" id="Q1_4" data-reset=true><label for="Q1_4">none of the above</label>
+        </div>
+        <div class="submit row">
+            <input type="button" value="Previous" data-button-type="previous">
+            <input type="button" value="Next" data-button-type="next">
+        </div>
     </div>
+
+    <div class="question" id="Q1A">
+        Pick one of the following
+        <div class="row">
+            <input type="radio" name="gender" value="1" id="Q1A_1"><label for="Q1A_1">Male</label>
+        </div>
+        <div class="row">
+            <input type="radio" name="gender" value="2" id="Q1A_2"><label for="Q1A_2">Female</label>
+        </div>
+        <div class="row">
+            <input type="radio" name="gender" value="0" id="Q1A_0"><label for="Q1A_0">Other</label><input type="text"
+                id="Q1A_other" />
+        </div>
+        <div class="submit row">
+            <input type="button" value="Previous" data-button-type="previous">
+            <input type="button" value="Next" data-button-type="next">
+        </div>
+    </div>
+
+    <div class="question" id="Q2">
+        <label class="textlabel for=" Q2_1">Street Number</label><input type="number" id="Q2_1"><div class="errmess" for="Q2_1">Try again</div>
+        <label class="textlabel for=" Q2_2">Full Street name</label><input type="text" id="Q2_2"><div class="errmess" for="Q2_2"><p></p></div>
+        <label class="textlabel for=" Q2_3">Apartment, suite, unit, building, etc</label><input type="text" id="Q2_3"><div class="errmess" for="Q2_3"><p></p></div>
+        <label class="textlabel for=" Q2_4">City</label><input type="text" id="Q2_4"><div class="errmess" for="Q2_4"><p></p></div>
+        <label class="textlabel for=" Q2_5">State/Province</label><input type="text" id="Q2_5" list="StateList"><div class="errmess" for="Q2_5"><p></p></div>
+        <label class="textlabel for=" Q2_6">Zip Code</label><input type="text" id="Q2_6"><div class="errmess" for="Q2_7"><p></p></div>
+        <label class="textlabel for=" Q2_7">Country</label><input type="text" id="Q2_7" list="CountryList"><div class="errmess" for="Q2_7"><p></p></div>
+        <datalist id="CountryList"></datalist>
+        <datalist id="StateList"></datalist>
+
+        <div class="submit row">
+            <input type="button" value="Previous" data-button-type="previous">
+            <input type="button" value="Next" data-button-type="next">
+        </div>
+    </div>
+
+
 </body>
+
 <script>
-    document.getElementById("Q1_0").addEventListener(" ", (event) => { console.log("q1_0 changed...") })
+    window.addEventListener("load", init)
 </script>
 
 </html>
