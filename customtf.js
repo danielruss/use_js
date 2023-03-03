@@ -2,28 +2,36 @@
 class DansEnsemble extends tf.layers.Layer {
     constructor(config) {
         super(config);
-        console.log(config)
+        this.getActivation(config)
+    }
+
+    getActivation(config){
+        if (config?.activation){
+            console.log(config.activation)
+            this.activation = tf.layers.activation({activation:config.activation[0]});
+        }
     }
 
     build(inputShape) {
-        this.w = this.addWeight('w', [inputShape.length], 'float32', tf.initializers.glorotUniform())
-//        this.w = this.addWeight('w', [inputShape.length], 'float32', tf.initializers.constant({value:2}))
+        this.kernel = this.addWeight('kernel', [inputShape.length], 'float32', tf.initializers.glorotUniform())
+        this.bias = this.addWeight('bias', [1], 'float32', tf.initializers.glorotUniform())
     }
 
     call(input) {
         console.log(".... in call ....")
-        this.getWeights()[0].print()
         return tf.tidy(() => {
             let a = tf.cast( tf.stack(input,1), "float32" );
-            a.print()
             let w = this.getWeights()[0];
-            tf.matMul(w.reshape([1,-1]),a).print()
-            return tf.matMul(w.reshape([1,-1]),a)
+            let b = this.getWeights()[1];
+            let output = tf.add( tf.matMul(w.reshape([1,-1]),a), b )
+            if (this.activation){
+                output = this.activation.apply(output)
+            }
+            return output
         });
     }
 
     computeOutputShape(inputShape) {
-        console.log("... in compute output shape ... ",inputShape)
         return inputShape[0]
     }
     static get className() {
@@ -31,3 +39,4 @@ class DansEnsemble extends tf.layers.Layer {
     }
 }
 tf.serialization.registerClass(DansEnsemble);
+
