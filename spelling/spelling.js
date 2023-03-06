@@ -4,7 +4,7 @@ import localforage from 'https://cdn.skypack.dev/localforage';
 let hunspell_dictionary_url = "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic"
 let soccer_dictionary_url = "./soccer_en_US.dic"
 
-async function loadDictionary(dictionary_url) {
+export async function loadDictionary(dictionary_url) {
 
     //let dictionary_url = "https://cgit.freedesktop.org/libreoffice/dictionaries/tree/en"
     let utf8decoder = new TextDecoder("Windows-1252");
