@@ -1,0 +1,31 @@
+#drop {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px;
+    border: thin black solid;
+    width: 150px;
+    height: 150px;
+}
+
+#errorMessage {
+    margin: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: red;
+}
+
+#resultsDiv {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+}
+.over {
+    background-color: black;
+    color: white;
+}
+
+progress {
+    text-align: center;
+}
+
+progress:after {
+    content: attr(value)'%';
+}

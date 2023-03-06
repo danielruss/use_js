@@ -1,45 +1,51 @@
 
 console.log("...in index.js...")
 
-const indxTbl=localforage.createInstance({
-    name:"csvparse",
-    storeName: "index"
-});
+let indxTbl=null;
 
-function makeIndex(){
-    let lblElement=document.getElementById("inIDB")
-    let s=""
-    indxTbl.iterate( (v,k,i)=>{
+function makeIndex() {
+    let lblElement = document.getElementById("inIDB")
+    let s = ""
+    indxTbl.iterate((v, k, i) => {
     });
 }
 
-function parseCSVStream(file){
+function parseCSVStream(file) {
 
-    indxTbl.setItem(file.name,Date())
+    indxTbl.setItem(file.name, Date())
 
     console.log(file.name)
-    let dtaStore=localforage.createInstance({
+    let dtaStore = localforage.createInstance({
         name: "csvparse",
         storeName: file.name
     })
 
 
-    let indx=0;
-    Papa.parse(file,{
-        header : true,
-        step: function(row) {
-            dtaStore.setItem( indx.toString(16).padStart(5,"0"),row.data)
-            console.log(`${++indx} Row:`, row.data);
+    let indx = 0;
+    Papa.parse(file, {
+        header: true,
+        step: async function (row) {
+            dtaStore.setItem(indx.toString(16).padStart(5, "0"), row.data)
+            //setTimeout(()=>{console.log(`${++indx} Row:`, row.data)},2000)
+            console.log(`ding ding - ${row.data}`)
+            await new Promise( (resolve,reject) => {
+                setTimeout( ()=>{
+                    console.log(console.log(`${++indx} Row:`, row.data));
+                    resolve(row.data)
+                } , 2000)
+            } )
         },
-        complete: function() {
-            console.log("All done!");
-        }
     })
 }
 
 
 
 window.addEventListener("load", () => {
+    indxTbl = localforage.createInstance({
+        name: "csvparse",
+        storeName: "index"
+    });
+
     let dropBox = document.querySelector(".dropbox")
     console.log(dropBox)
 
@@ -53,8 +59,8 @@ window.addEventListener("load", () => {
         console.log(event)
         if (event.dataTransfer.files) {
             [...event.dataTransfer.files].forEach((file, i) => {
-                if (file.type != "text/csv") 
-                console.log(`file[${i}].name = ${file.name}  type=${file.type}`)
+                if (file.type != "text/csv")
+                    console.log(`file[${i}].name = ${file.name}  type=${file.type}`)
                 parseCSVStream(file)
             })
         }
