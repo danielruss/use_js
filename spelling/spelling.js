@@ -3,7 +3,7 @@ import localforage from 'https://cdn.skypack.dev/localforage';
 let hunspell_dictionary_url = "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic"
 let soccer_dictionary_url = "./soccer_en_US.dic"
 
-export async function loadDictionary(dictionary_url) {
+async function loadDictionary(dictionary_url) {
     let utf8decoder = new TextDecoder("Windows-1252");
     let dict = new Set()
     const regex = new RegExp('^[a-z]');
@@ -32,15 +32,29 @@ export async function loadDictionary(dictionary_url) {
     return dict
 }
 
-async function create_dictionary() {
+
+export async function create_dictionary() {
+    let dict = await localforage.getItem("en_US.dict")
+    if (dict) {
+        console.log("... pulling from cache ...")
+        return new Set(JSON.parse(dict))
+    }
+    console.log("... reloading ...")
+    return recreate_dictionary()
+}
+
+export async function recreate_dictionary() {
     let p1 = loadDictionary(hunspell_dictionary_url)
     let p2 = loadDictionary(soccer_dictionary_url);
-    return await Promise.all([p1,p2]).then( ([s1,s2])=> new Set([...s1,...s2]) );
+    let dict = await Promise.all([p1,p2]).then( ([s1,s2])=> new Set([...s1,...s2]) );
+    await localforage.setItem("en_US.dict",JSON.stringify([...dict]))
+    return dict;
 }
 
 
 console.log("in spelling ", localforage)
 window.dict = await create_dictionary()
 window.create_dictionary = create_dictionary
+window.recreate_dictionary =recreate_dictionary
 console.log(dict.has("endodontist"))
 console.log(dict.has('zygote'))

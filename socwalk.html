@@ -14,6 +14,9 @@
         nav img {
             height: 2em;
         }
+        .fs-xs {
+            font-size: x-small;
+        }
     </style>
 </head>
 
@@ -49,30 +52,39 @@
             <div class="tab-pane fade show active" id="home">
                 <form class="m-3">
                     <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="all400">
+                            <label class="form-check-label" for="all400">return all SOC codes/values</label>
+                          </div>
                         <label for="soc1980_file" class="form-label">SOC 1980 coded File</label>
                         <input class="form-control" type="file" id="soc1980_file" accept="application/json, text/csv">
-                        <input type="button" id="soc1980xwButton" value="crosswalk">
+                        <progress id="socxwpb" class="d-none"></progress> <label id="label1" for="socxwpb"></label>
                     </div>
-
                 </form>
             </div>
+
             <div class="tab-pane fade" id="profile">
                 <p>NOC 2011/2016 crosswalk coming later...</p>
             </div>
+
+            <table id="resultsTable" class="table table-sm fs-xs">
+                <thead>
+                    <th>Id</th><th>Job Title</th><th>Job Tasks</th><th>soc1980</th>
+                    <th>soc2010_1</th><th>score_1</th><th>soc2010_2</th><th>score_2</th><th>soc2010_3</th><th>score_3</th>
+                    <th>soc2010_4</th><th>score_4</th><th>soc2010_5</th><th>score_5</th><th>soc2010_6</th><th>score_6</th>
+                    <th>soc2010_7</th><th>score_7</th><th>soc2010_8</th><th>score_8</th><th>soc2010_9</th><th>score_9</th>
+                    <th>soc2010_10</th><th>score_10</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <input id="s1980jsonDL" type="button" value="download (json)">
         </div>
-
-
     </div>
 
 
     <script src="customtf.js"></script>
     <script async>
 
-
-        let model2=null;
-        (async function(){
-            model2 = await tf.loadLayersModel('http://localhost:5500/test_model/model.json');
-        })();
 
         let t1 = tf.tensor( [ [1,2,3,4],[4,5,6,7],[6,7,8,9] ])
         let t2 = tf.tensor( [ [9,8,7,6],[6,5,4,3],[4,3,2,1] ])
@@ -83,9 +95,6 @@
         t3.dispose()
 
         let model=null;
-        (async function(){
-            model = await tf.loadGraphModel('http://localhost:5500/test_graph_model/model.json');
-        })();
 
 
     </script>
