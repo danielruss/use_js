@@ -5,9 +5,6 @@ console.log("in socwalkui....")
 
 let soc1980_xw = {};
 
-
-
-
 (async function () {
     console.log("....")
     soc1980_xw = await xw_soc1980_soc2010.initialize()
@@ -22,14 +19,14 @@ Array.prototype.sortIndices = function (compare) {
     return indices.sort((a, b) => compare(arr[a], arr[b]))
 }
 
-function handleFile(event) {
-    if (event.target.files.length > 0) {
+function handleFile(files,id) {
+    console.log("... in handle files")
+    if (files.length > 0) {
         let xw = undefined;
 
         // select the soc1980 or the noc10
-        switch (event.target.id) {
+        switch (id) {
             case 'soc1980_file':
-                console.log(soc1980_xw)
                 xw = soc1980_xw;
                 break;
             default:
@@ -37,16 +34,16 @@ function handleFile(event) {
         }
 
         if (!xw) return;
-        console.log(`analyzing ${event.target.files[0].name} type: ${event.target.files[0].type}`)
-        switch (event.target.files[0].type) {
+        console.log(`analyzing ${files[0].name} type: ${files[0].type}`)
+        switch (files[0].type) {
             case 'application/json':
-                handleJSON(event.target.files[0], xw);
+                handleJSON(files[0], xw);
                 break;
             case 'text/csv':
-                handleCSV(event.target.files[0], xw);
+                handleCSV(files[0], xw);
                 break;
             default:
-                console.log(`${event.target.files[0].type} is not supported`)
+                console.log(`${files[0].type} is not supported`)
         }
     }
 
@@ -56,20 +53,24 @@ async function handleCSV(file, crosswalk) {
 
     let num_rows = 0;
     let max_rows = -1;
-    let pb = document.getElementById("socxwpb")
     let label = document.getElementById("label1")
+    let pb = document.getElementById("socxwpb")
+    pb.value=0;
+    label.innerText=""
     console.log(" ... counting rows ...")
-
+    
     Papa.parse(file, {
         header: true,
         step: function () {
             num_rows++;
         },
+        skipEmptyLines: true,
         complete: function () {
             pb.classList.remove("d-none")
             pb.value = 0
             max_rows = (max_rows > 0) ? max_rows : num_rows;
             pb.max = max_rows
+            label.innerText = ` analyzed (0/${max_rows})`
             console.log(max_rows)
         }
     })
@@ -78,56 +79,16 @@ async function handleCSV(file, crosswalk) {
     let row_number = 0;
     let finished_jobs = 0
     let predictions = [];
-    let resultsTable = document.getElementById("resultsTable").tBodies[0]
+
+    //let resultsTable = document.getElementById("resultsTable").tBodies[0]
     Papa.parse(file, {
         header: true,
         beforeFirstChunk: function () {
-            resultsTable.innerText = ""
+//            resultsTable.innerText = ""
             pb.value = 0;
             label.innerText = ` analyzed (0/${max_rows})`
         },
-        /*
-        step: function(results,parser){
-            if (Object.keys(results.data).length>1 && row_number<max_rows){
-                parser.pause()
-                let job_description=results.data;
-                row_number++;
-                crosswalk.predict(job_description.JobTitle,job_description.JobTask,job_description.soc1980)
-                .then((prediction) => {
-                    let indx = prediction.sortIndices((a, b) => b - a)
-                    let codes = indx.map( index=>soc1980_xw.soc2010_codes[index].code  )
-                    let score = indx.map( index => prediction[index] )
-                    codes.length=10;
-                    score.length=10;
-                    predictions.push(
-                        {
-                            Id: job_description.Id,
-                            JobTitle: job_description.JobTitle,
-                            JobTask: job_description.JobTask,
-                            soc1980: job_description.soc1980,
-                            soc2010: codes,
-                            score: score
-                        }
-                    )
-                    finished_jobs++;
-                    if (finished_jobs % 50 == 0) {
-                        pb.value=row_number;
-                        label.innerText= ` analyzed (${finished_jobs}/${max_rows})`
-                        console.log(results,finished_jobs,max_rows,num_rows)
-                    }
-                    if (finished_jobs>=max_rows){
-                        console.log("... all done ... ",finished_jobs)
-                        pb.value=finished_jobs;
-                        label.innerText= ` analyzed (${finished_jobs}/${max_rows})`
-                        downloadPredictions(predictions)
-                    }
-                })
-                parser.resume()
-            }
-            
-
-            
-        }, */
+        skipEmptyLines: true,
         chunkSize: 1024,
         chunk: function (results, parser) {
             parser.pause()
@@ -177,7 +138,6 @@ async function handleCSV(file, crosswalk) {
                             return job_result
                         })
                     }
-
                     predictions.push(...chunk_res);
                     finished_jobs += chunk_res.length
                     pb.value = finished_jobs;
@@ -190,6 +150,12 @@ async function handleCSV(file, crosswalk) {
         complete: function () {
             console.log("...complete called...")
             downloadPredictions(predictions)
+            setTimeout(()=>{
+                pb.value=0
+                pb.max=0
+                pb.classList.add("d-none")
+                label.innerText=""
+            })
         },
         complete1: function (results) {
             // the last results is undefined...
@@ -220,6 +186,7 @@ function downloadPredictions(predictions) {
     downloadJSONObject(predictions)
 }
 
+/*
 function addRow(element, results) {
     let indx = results.prediction.sortIndices((a, b) => b - a)
     let rowData = {
@@ -245,7 +212,7 @@ function addRow(element, results) {
     }
     rowElement.dataset.data = JSON.stringify(rowData)
 }
-
+*/
 
 async function handleJSON(file, crosswalk) {
     let reader = new FileReader()
@@ -280,26 +247,27 @@ function downloadJSONObject(obj) {
     URL.revokeObjectURL(url)
 }
 
-function s1980jsonDL(event) {
-    let resultsTable = document.getElementById("resultsTable").tBodies[0]
-    if (resultsTable.children.length > 0) {
-        let dta = Array.from(resultsTable.children).map(row => row.dataset.data)
-        downloadJSONObject(dta)
-        return;
-    }
-    console.log('... no results ...')
-}
 window.addEventListener("load", () => {
-    document.getElementById("soc1980_file").addEventListener("change", handleFile)
-    document.getElementById("s1980jsonDL").addEventListener("click", (event) => s1980jsonDL(event))
+    document.getElementById("soc1980_file").addEventListener("change", (event)=>{
+        handleFile(event.target.files,event.target.id)
+    })
 
-    /*
-        document.getElementById("soc1980xwButton").addEventListener("click", ()=>{
-            value = document.getElementById("soc1980_file").value
-            console.log(`value: ${value}`)
-            if (value.trim().length>0){
-                console.log(`=== run ${value}`)
-            }
-        })
-    */
+    document.body.addEventListener("drop",(event)=>{
+        event.target.classList.remove("border","border-5","border-dark")
+        console.log(" ... DROP ...",event)
+        console.log(document.querySelector(".active").dataset.inputFile)
+        event.preventDefault()
+        if (event.dataTransfer.files[0]){
+            handleFile(event.dataTransfer.files,document.querySelector(".active").dataset.inputFile)
+        }
+    })
+    document.body.addEventListener("dragover",(event)=>{
+        event.target.classList.add("border","border-5","border-dark")
+        event.preventDefault()
+    })
+    document.body.addEventListener("dragleave",(event)=>{
+        event.target.classList.remove("border","border-5","border-dark")
+        event.preventDefault()
+    })
+
 })

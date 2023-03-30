@@ -11,9 +11,14 @@
 
     <script src="./socwalkui.js" type="module"></script>
     <style>
+        body {
+            height: 100vh;
+        }
+
         nav img {
             height: 2em;
         }
+
         .fs-xs {
             font-size: x-small;
         }
@@ -40,33 +45,41 @@
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a href="#home" class="nav-link active" data-bs-toggle="tab">SOC 1980</a>
+                <a href="#soc1980" class="nav-link active" data-bs-toggle="tab" data-input-file="soc1980_file">SOC
+                    1980</a>
             </li>
             <li class="nav-item">
-                <a href="#profile" class="nav-link" data-bs-toggle="tab">NOC 2011</a>
+                <a href="#noc2011" class="nav-link" data-bs-toggle="tab">NOC 2011</a>
             </li>
 
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane fade show active" id="home">
+            <div class="tab-pane fade show active" id="soc1980">
                 <form class="m-3">
                     <div class="mb-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="all400">
-                            <label class="form-check-label" for="all400">return all SOC codes/values</label>
-                          </div>
-                        <label for="soc1980_file" class="form-label">SOC 1980 coded File</label>
-                        <input class="form-control" type="file" id="soc1980_file" accept="application/json, text/csv">
-                        <progress id="socxwpb" class="d-none"></progress> <label id="label1" for="socxwpb"></label>
+                        <form id="soc1980_xw_form">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="all400">
+                                <label class="form-check-label" for="all400">return all SOC codes/values</label>
+                            </div>
+                            <label for="soc1980_file" class="form-label">SOC 1980 coded File</label>
+                            <input class="form-control" type="file" id="soc1980_file"
+                                accept="application/json, text/csv">
+                                <button class="btn btn-outline-secondary my-2" type="reset">reset</button>
+                            <div>
+                                <progress id="socxwpb" class="d-none"></progress> <label id="label1" for="socxwpb"></label>
+                            </div>
+                        </form>
                     </div>
                 </form>
             </div>
 
-            <div class="tab-pane fade" id="profile">
+            <div class="tab-pane fade" id="noc2011">
                 <p>NOC 2011/2016 crosswalk coming later...</p>
             </div>
 
+            <!--
             <table id="resultsTable" class="table table-sm fs-xs">
                 <thead>
                     <th>Id</th><th>Job Title</th><th>Job Tasks</th><th>soc1980</th>
@@ -77,7 +90,8 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <input id="s1980jsonDL" type="button" value="download (json)">
+                <input id="s1980jsonDL" type="button" value="download (json)">
+            -->
         </div>
     </div>
 
@@ -86,15 +100,15 @@
     <script async>
 
 
-        let t1 = tf.tensor( [ [1,2,3,4],[4,5,6,7],[6,7,8,9] ])
-        let t2 = tf.tensor( [ [9,8,7,6],[6,5,4,3],[4,3,2,1] ])
-        let t3 = tf.tensor( [ [9,8,7,3],[4,3,2,1],[6,5,4,3] ])        
+        let t1 = tf.tensor([[1, 2, 3, 4], [4, 5, 6, 7], [6, 7, 8, 9]])
+        let t2 = tf.tensor([[9, 8, 7, 6], [6, 5, 4, 3], [4, 3, 2, 1]])
+        let t3 = tf.tensor([[9, 8, 7, 3], [4, 3, 2, 1], [6, 5, 4, 3]])
 
         t1.dispose()
         t2.dispose()
         t3.dispose()
 
-        let model=null;
+        let model = null;
 
 
     </script>
